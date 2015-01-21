@@ -81,7 +81,37 @@
       force_next_item();
       return res;
     };
+
+    var get_rate = function () {
+        return parseInt(document.getElementById('rate_img').src.replace(/^.*(\d)\.gif$/, '$1'), 10);
+    };
+
+    var stop_reading = function(){
+        if( window.State.now_reading ){
+            var api = new API("/api/feed/unsubscribe");
+            callback = Function.empty;
+            var sid = State.now_reading;
+            api.post({ subscribe_id:sid },function(res){
+                message("購読停止しました");
+                callback(res);
+            });
+            window.Control.read_next_subs();
+        }
+
+    };
+
+    var rate_down = function(){
+        window.vi[get_rate()-1]();
+    };
+
+    var rate_up = function(){
+        window.vi[get_rate()+1]();
+    };
+
     window.Keybind.add("p", pin);
     window.Keybind.add("v", view_original);
+    window.Keybind.add("l", stop_reading );
+    window.Keybind.add("q", rate_down );
+    window.Keybind.add("w", rate_up );
   };
 })();
